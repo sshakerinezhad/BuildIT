@@ -62,10 +62,24 @@ AI-powered robotics build planner with two modes:
 - API request sent `kit_ids` instead of `kits`, and was missing required `goal` field - caused [object Object] errors
 
 ### Step 7: Digital Ocean Deploy
-- [ ] Dockerize backend
-- [ ] Deploy to DO App Platform
+- [x] Dockerize backend (`backend/Dockerfile`, `backend/.dockerignore`)
+- [x] Configure frontend for production (`VITE_API_URL` env var)
+- [ ] Deploy backend to DO App Platform (Service)
+- [ ] Deploy frontend to DO App Platform (Static Site)
 - [ ] Set environment variables
-- [ ] Get live URL
+- [ ] Get live URLs
+
+**Architecture:** Separate deployments - backend as container service, frontend as static site.
+
+**Backend deploy settings:**
+- Source: `backend/` directory
+- Env vars: `MONGODB_URI`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`
+
+**Frontend deploy settings:**
+- Source: `frontend/` directory
+- Build command: `npm install && npm run build`
+- Output dir: `dist`
+- Build env var: `VITE_API_URL=<backend-url-from-step-above>`
 
 ---
 
