@@ -150,6 +150,7 @@ class GenerateRequest(BaseModel):
     """Request body for the unified generate endpoint."""
     mode: Literal["build", "reverse"]
     kits: list[str] = []  # kit IDs - for build mode
+    custom_parts: list[str] = []  # user-added parts not in kits
     goal: str  # what to build OR what to reverse-engineer
 
 
@@ -248,16 +249,23 @@ async def call_llm(prompt: str) -> tuple[str, str]:
     raise RuntimeError("No LLM API keys configured")
 
 
-def build_prompt_build_mode(kits_parts: dict[str, list[str]], goal: str) -> str:
+def build_prompt_build_mode(
+    kits_parts: dict[str, list[str]], custom_parts: list[str], goal: str
+) -> str:
     """Create prompt for build mode."""
     parts_list = []
     for kit_name, parts in kits_parts.items():
         parts_list.append(f"{kit_name}: {', '.join(parts)}")
 
+    # Add custom parts section if any were provided
+    custom_section = ""
+    if custom_parts:
+        custom_section = f"\nCustom Parts: {', '.join(custom_parts)}"
+
     return f"""You are an expert robotics and electronics instructor. A user wants to build a project using specific parts.
 
 AVAILABLE PARTS:
-{chr(10).join(parts_list)}
+{chr(10).join(parts_list)}{custom_section}
 
 USER'S GOAL: {goal}
 
@@ -372,7 +380,7 @@ async def generate_instructions(request: GenerateRequest):
                     detail="No valid kits selected. Please select at least one kit.",
                 )
 
-            prompt = build_prompt_build_mode(kits_parts, request.goal)
+            prompt = build_prompt_build_mode(kits_parts, request.custom_parts, request.goal)
             response_text, model_used = await call_llm(prompt)
             data = parse_gemini_response(response_text)
 

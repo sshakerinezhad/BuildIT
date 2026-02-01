@@ -48,6 +48,14 @@ When something seems oddly implemented, assume there was a reason - check histor
 
 Simplicity is king, when things can be refered to a single source for modifications this makes it easier to read and quickly modify the code/add things to it
 
+## Common Gotchas
+
+### Frontend/Backend Field Naming
+When working with APIs that transform database records, verify the exact field names returned (e.g., MongoDB `_id` often becomes `id` in API responses). Test selectors/lookups early to catch mismatches.
+
+### LLM Provider Fallback
+For AI features, implement automatic fallback between providers (primary → fallback) with a `model_used` response field so consumers know which model generated the response.
+
 ## Skills
 
 Domain-specific guidance lives in `.claude/skills/`. Each skill file has a `triggers` frontmatter listing when to consult it:

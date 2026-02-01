@@ -2,42 +2,29 @@
 
 ## Last Session (2026-02-01)
 
-### Completed
-- **Step 7 (partial)** - Deployment configuration done
-  - Created `backend/Dockerfile` and `.dockerignore`
-  - Updated `frontend/src/App.jsx` to use `VITE_API_URL` env var
-  - Created `frontend/.env.production.example`
-  - Frontend build verified working
+### What Was Done
+Completed full UI overhaul in 5 phases:
+1. **CSS Foundation** - Added surface layers, kit category colors, step wizard colors to `index.css`
+2. **Kit Cards** - New `KitCard` component with colored accent bars, descriptions, hover effects
+3. **Custom Parts** - New `CustomPartInput` component + backend support for user-added parts
+4. **Step Wizard** - New `StepWizard` component with progress tracking, completion states, navigation
+5. **Polish** - Loading skeleton, animations, mobile responsive layout
 
-### Architecture Decision
-Chose **separate deployments** over single container:
-- Backend: DO App Platform Service (container)
-- Frontend: DO App Platform Static Site
-- Why: Scales independently, static site is cheaper/faster
+### Files Created
+- `frontend/src/data/kitMeta.js`
+- `frontend/src/components/KitCard.jsx` + `.css`
+- `frontend/src/components/CustomPartInput.jsx` + `.css`
+- `frontend/src/components/StepWizard.jsx` + `.css`
 
-### Files Changed This Session
-- `backend/Dockerfile` - Created
-- `backend/.dockerignore` - Created
-- `frontend/src/App.jsx:5` - API_URL now reads from env var
-- `frontend/.env.production.example` - Created
+### Files Modified
+- `frontend/src/index.css`, `App.jsx`, `App.css`
+- `backend/main.py` (added `custom_parts` field)
 
-### Next Up
-Deploy to Digital Ocean:
-1. Push code to GitHub (if not already)
-2. Create DO App with backend service
-3. Note the backend URL
-4. Create DO Static Site for frontend with `VITE_API_URL` set
-5. Test end-to-end
+### Still Pending
+- Deploy to Digital Ocean (Docker config already done)
+- Refresh Gemini API key (was flagged as leaked)
 
-### Running Locally
-```bash
-# Terminal 1: Backend
-cd backend && source venv/bin/activate && uvicorn main:app --reload
-
-# Terminal 2: Frontend
-cd frontend && npm run dev
-```
-
-### Important Notes
-- **Gemini key** - Still needs fresh key from aistudio.google.com
-- **CORS** - Backend allows all origins (`*`), consider restricting to frontend domain in production
+### Next Steps
+- Test the UI locally to verify all components render correctly
+- Run `npm run dev` in frontend and check kit cards, custom parts, step wizard
+- When ready, proceed with DO deployment

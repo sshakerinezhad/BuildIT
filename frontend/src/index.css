@@ -5,6 +5,7 @@
 }
 
 :root {
+  /* Base colors */
   --bg-primary: #0f0f0f;
   --bg-secondary: #1a1a1a;
   --bg-tertiary: #252525;
@@ -15,6 +16,22 @@
   --border: #333;
   --success: #22c55e;
   --error: #ef4444;
+
+  /* Surface layers for visual depth */
+  --surface-1: rgba(255, 255, 255, 0.03);
+  --surface-2: rgba(255, 255, 255, 0.05);
+  --accent-glow: rgba(99, 102, 241, 0.15);
+
+  /* Kit category colors */
+  --kit-electronics: #3b82f6;
+  --kit-motors: #f59e0b;
+  --kit-sensors: #10b981;
+  --kit-default: #6366f1;
+
+  /* Step wizard colors */
+  --step-complete: #22c55e;
+  --step-active: #6366f1;
+  --step-pending: #4b5563;
 }
 
 body {

@@ -1,0 +1,122 @@
+# BuildIT - Master Plan
+
+## What It Is
+AI-powered robotics build planner with two modes:
+- **Build Mode**: I have these parts → What can I build & how?
+- **Reverse Mode**: I want to build this → What parts do I need?
+
+## Required APIs
+| API | Role |
+|-----|------|
+| MongoDB | Store kits, parts database, generated plans |
+| Gemini | Core AI for plan generation |
+| OpenRouter | Fallback/alternative LLM |
+| Digital Ocean | Hosting |
+
+---
+
+## Step-by-Step Implementation
+
+### Step 1: Backend Setup ✓
+- [x] Create `backend/main.py` with FastAPI
+- [x] Add MongoDB connection (Atlas free tier)
+- [x] Create `.env` for API keys
+- [x] Install dependencies
+
+**Files:** `backend/main.py`, `backend/requirements.txt`, `backend/.env`, `backend/.env.example`, `.gitignore`
+
+### Step 2: MongoDB - Seed Data ✓
+- [x] Seed 3 pre-defined kits (Arduino Starter, Motor Kit, Sensor Pack)
+- [x] Create `GET /api/kits` endpoint
+
+**Implementation note:** Auto-seeds on startup if kits collection is empty.
+
+### Step 3: Gemini Integration ✓
+- [x] Create `POST /api/generate` endpoint
+- [x] Build Mode prompt: parts → build plan
+- [x] Reverse Mode prompt: goal → parts list + where to buy
+
+**Gotcha:** Original API key was flagged as leaked. Replace in `backend/.env` with fresh key from https://aistudio.google.com/app/apikey
+
+### Step 4: OpenRouter Fallback ✓
+- [x] Add OpenRouter as alternative model
+- [x] Auto-fallback when Gemini fails
+- [x] Response includes `model_used` field
+
+### Step 5: Frontend Setup ✓
+- [x] Create Vite + React app
+- [x] Install react-markdown for output rendering
+- [x] Basic layout with dark theme
+
+### Step 6: Frontend - UI Components ✓
+- [x] Mode toggle: Build Mode / Reverse Mode
+- [x] Kit selector (multi-select for Build Mode)
+- [x] Goal input text field
+- [x] Generate button with loading state
+- [x] Tabbed results view: Overview | Steps | Wiring/Parts | Code
+
+**Files:** `frontend/src/App.jsx`, `frontend/src/App.css`, `frontend/src/index.css`
+
+**Bugs fixed:**
+- Kit selector used `kit._id` but API returns `kit.id` - caused all kits to appear selected
+- API request sent `kit_ids` instead of `kits`, and was missing required `goal` field - caused [object Object] errors
+
+### Step 7: Digital Ocean Deploy
+- [x] Dockerize backend (`backend/Dockerfile`, `backend/.dockerignore`)
+- [x] Configure frontend for production (`VITE_API_URL` env var)
+- [ ] Deploy backend to DO App Platform (Service)
+- [ ] Deploy frontend to DO App Platform (Static Site)
+- [ ] Set environment variables
+- [ ] Get live URLs
+
+**Architecture:** Separate deployments - backend as container service, frontend as static site.
+
+**Backend deploy settings:**
+- Source: `backend/` directory
+- Env vars: `MONGODB_URI`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`
+
+**Frontend deploy settings:**
+- Source: `frontend/` directory
+- Build command: `npm install && npm run build`
+- Output dir: `dist`
+- Build env var: `VITE_API_URL=<backend-url-from-step-above>`
+
+---
+
+## API Endpoints
+
+```
+GET  /api/kits       → List all kits from MongoDB
+POST /api/generate   → Unified endpoint (mode: "build" | "reverse" in body)
+GET  /health         → Health check
+```
+
+**Note:** Simplified from separate build/reverse endpoints to single unified endpoint.
+
+---
+
+## Running Locally
+
+**Backend:**
+```bash
+cd backend
+source venv/bin/activate
+uvicorn main:app --reload
+# API docs: http://localhost:8000/docs
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm run dev
+# Opens at http://localhost:5173
+```
+
+---
+
+## Verification Checklist
+- [x] MongoDB: Kits load on page open
+- [ ] Gemini: Build mode generates plan (needs fresh API key)
+- [ ] Gemini: Reverse mode generates shopping list (needs fresh API key)
+- [x] OpenRouter: Fallback works if Gemini fails
+- [ ] DO: App accessible via public URL

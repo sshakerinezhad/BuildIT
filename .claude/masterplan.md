@@ -1,122 +1,54 @@
-# BuildIT - Master Plan
+# BuildIT - UI Overhaul (Completed 2026-02-01)
 
-## What It Is
-AI-powered robotics build planner with two modes:
-- **Build Mode**: I have these parts → What can I build & how?
-- **Reverse Mode**: I want to build this → What parts do I need?
+## Summary
+Major UI refresh to improve visual polish, usability, and feature set.
 
-## Required APIs
-| API | Role |
-|-----|------|
-| MongoDB | Store kits, parts database, generated plans |
-| Gemini | Core AI for plan generation |
-| OpenRouter | Fallback/alternative LLM |
-| Digital Ocean | Hosting |
+## Completed Work
 
----
+### Phase 1: CSS Foundation ✓
+- [x] Added surface layer variables for visual depth (`--surface-1`, `--surface-2`)
+- [x] Added kit category color variables (`--kit-electronics`, `--kit-motors`, `--kit-sensors`)
+- [x] Added step wizard color variables
 
-## Step-by-Step Implementation
+### Phase 2: Enhanced Kit Cards ✓
+- [x] Created `kitMeta.js` with descriptions, colors, and icons per kit
+- [x] Created `KitCard` component with colored accent bar, description, checkmark on select
+- [x] Hover effects with lift and glow
 
-### Step 1: Backend Setup ✓
-- [x] Create `backend/main.py` with FastAPI
-- [x] Add MongoDB connection (Atlas free tier)
-- [x] Create `.env` for API keys
-- [x] Install dependencies
+### Phase 3: Custom Parts Feature ✓
+- [x] Created `CustomPartInput` component with chip tags
+- [x] Updated backend `GenerateRequest` to accept `custom_parts`
+- [x] Updated prompt builder to include custom parts in LLM context
 
-**Files:** `backend/main.py`, `backend/requirements.txt`, `backend/.env`, `backend/.env.example`, `.gitignore`
+### Phase 4: Step Wizard ✓
+- [x] Created `StepWizard` component with progress bar
+- [x] Vertical stepper with connecting lines
+- [x] Step completion tracking with checkmarks
+- [x] Previous/Next navigation
 
-### Step 2: MongoDB - Seed Data ✓
-- [x] Seed 3 pre-defined kits (Arduino Starter, Motor Kit, Sensor Pack)
-- [x] Create `GET /api/kits` endpoint
-
-**Implementation note:** Auto-seeds on startup if kits collection is empty.
-
-### Step 3: Gemini Integration ✓
-- [x] Create `POST /api/generate` endpoint
-- [x] Build Mode prompt: parts → build plan
-- [x] Reverse Mode prompt: goal → parts list + where to buy
-
-**Gotcha:** Original API key was flagged as leaked. Replace in `backend/.env` with fresh key from https://aistudio.google.com/app/apikey
-
-### Step 4: OpenRouter Fallback ✓
-- [x] Add OpenRouter as alternative model
-- [x] Auto-fallback when Gemini fails
-- [x] Response includes `model_used` field
-
-### Step 5: Frontend Setup ✓
-- [x] Create Vite + React app
-- [x] Install react-markdown for output rendering
-- [x] Basic layout with dark theme
-
-### Step 6: Frontend - UI Components ✓
-- [x] Mode toggle: Build Mode / Reverse Mode
-- [x] Kit selector (multi-select for Build Mode)
-- [x] Goal input text field
-- [x] Generate button with loading state
-- [x] Tabbed results view: Overview | Steps | Wiring/Parts | Code
-
-**Files:** `frontend/src/App.jsx`, `frontend/src/App.css`, `frontend/src/index.css`
-
-**Bugs fixed:**
-- Kit selector used `kit._id` but API returns `kit.id` - caused all kits to appear selected
-- API request sent `kit_ids` instead of `kits`, and was missing required `goal` field - caused [object Object] errors
-
-### Step 7: Digital Ocean Deploy
-- [x] Dockerize backend (`backend/Dockerfile`, `backend/.dockerignore`)
-- [x] Configure frontend for production (`VITE_API_URL` env var)
-- [ ] Deploy backend to DO App Platform (Service)
-- [ ] Deploy frontend to DO App Platform (Static Site)
-- [ ] Set environment variables
-- [ ] Get live URLs
-
-**Architecture:** Separate deployments - backend as container service, frontend as static site.
-
-**Backend deploy settings:**
-- Source: `backend/` directory
-- Env vars: `MONGODB_URI`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`
-
-**Frontend deploy settings:**
-- Source: `frontend/` directory
-- Build command: `npm install && npm run build`
-- Output dir: `dist`
-- Build env var: `VITE_API_URL=<backend-url-from-step-above>`
+### Phase 5: Polish ✓
+- [x] Loading skeleton animation
+- [x] Fade-in animations on results
+- [x] Spinner in generate button
+- [x] Mobile responsive (single-column kit grid)
+- [x] Improved tab styling
 
 ---
 
-## API Endpoints
+## Files Created
+- `frontend/src/data/kitMeta.js` - Kit descriptions/colors
+- `frontend/src/components/KitCard.jsx` + `.css`
+- `frontend/src/components/CustomPartInput.jsx` + `.css`
+- `frontend/src/components/StepWizard.jsx` + `.css`
 
-```
-GET  /api/kits       → List all kits from MongoDB
-POST /api/generate   → Unified endpoint (mode: "build" | "reverse" in body)
-GET  /health         → Health check
-```
-
-**Note:** Simplified from separate build/reverse endpoints to single unified endpoint.
-
----
-
-## Running Locally
-
-**Backend:**
-```bash
-cd backend
-source venv/bin/activate
-uvicorn main:app --reload
-# API docs: http://localhost:8000/docs
-```
-
-**Frontend:**
-```bash
-cd frontend
-npm run dev
-# Opens at http://localhost:5173
-```
+## Files Modified
+- `frontend/src/index.css` - CSS variables
+- `frontend/src/App.jsx` - Refactored to use new components
+- `frontend/src/App.css` - Complete restyle with polish + responsive
+- `backend/main.py` - Added `custom_parts` to API
 
 ---
 
-## Verification Checklist
-- [x] MongoDB: Kits load on page open
-- [ ] Gemini: Build mode generates plan (needs fresh API key)
-- [ ] Gemini: Reverse mode generates shopping list (needs fresh API key)
-- [x] OpenRouter: Fallback works if Gemini fails
-- [ ] DO: App accessible via public URL
+## Pending (from previous plan)
+- [ ] Deploy to Digital Ocean
+- [ ] Refresh Gemini API key (was flagged as leaked)

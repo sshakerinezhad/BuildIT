@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
+import KitCard from './components/KitCard'
+import CustomPartInput from './components/CustomPartInput'
+import StepWizard from './components/StepWizard'
 import './App.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
@@ -8,6 +11,7 @@ function App() {
   const [mode, setMode] = useState('build') // 'build' | 'reverse'
   const [kits, setKits] = useState([])
   const [selectedKits, setSelectedKits] = useState([])
+  const [customParts, setCustomParts] = useState([])
   const [goal, setGoal] = useState('')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
@@ -35,8 +39,13 @@ function App() {
 
     try {
       const body = mode === 'build'
-        ? { mode: 'build', kits: selectedKits, goal: 'Suggest a project' }
-        : { mode: 'reverse', kits: [], goal }
+        ? {
+            mode: 'build',
+            kits: selectedKits,
+            custom_parts: customParts,
+            goal: 'Suggest a project'
+          }
+        : { mode: 'reverse', kits: [], custom_parts: [], goal }
 
       const res = await fetch(`${API_URL}/api/generate`, {
         method: 'POST',
@@ -60,7 +69,7 @@ function App() {
   }
 
   const canGenerate = mode === 'build'
-    ? selectedKits.length > 0
+    ? selectedKits.length > 0 || customParts.length > 0
     : goal.trim().length > 0
 
   return (
@@ -78,13 +87,15 @@ function App() {
               className={`mode-btn ${mode === 'build' ? 'active' : ''}`}
               onClick={() => setMode('build')}
             >
-              🔧 Build Mode
+              <span className="mode-icon">🔧</span>
+              Build Mode
             </button>
             <button
               className={`mode-btn ${mode === 'reverse' ? 'active' : ''}`}
               onClick={() => setMode('reverse')}
             >
-              🎯 Reverse Mode
+              <span className="mode-icon">🎯</span>
+              Reverse Mode
             </button>
           </div>
 
@@ -101,16 +112,19 @@ function App() {
                 <label>Select Your Kits:</label>
                 <div className="kit-grid">
                   {kits.map(kit => (
-                    <div
+                    <KitCard
                       key={kit.id}
-                      className={`kit-card ${selectedKits.includes(kit.id) ? 'selected' : ''}`}
-                      onClick={() => toggleKit(kit.id)}
-                    >
-                      <h3>{kit.name}</h3>
-                      <p>{kit.parts?.length || 0} parts</p>
-                    </div>
+                      kit={kit}
+                      selected={selectedKits.includes(kit.id)}
+                      onToggle={() => toggleKit(kit.id)}
+                    />
                   ))}
                 </div>
+
+                <CustomPartInput
+                  parts={customParts}
+                  onPartsChange={setCustomParts}
+                />
               </div>
             ) : (
               <div className="goal-input">
@@ -129,13 +143,39 @@ function App() {
               onClick={handleGenerate}
               disabled={!canGenerate || loading}
             >
-              {loading ? 'Generating...' : 'Generate Plan'}
+              {loading ? (
+                <span className="loading-text">
+                  <span className="spinner" />
+                  Generating...
+                </span>
+              ) : (
+                'Generate Plan'
+              )}
             </button>
           </div>
 
+          {/* Loading Skeleton */}
+          {loading && (
+            <div className="results skeleton">
+              <div className="skeleton-tabs">
+                <div className="skeleton-tab" />
+                <div className="skeleton-tab" />
+                <div className="skeleton-tab" />
+                <div className="skeleton-tab" />
+              </div>
+              <div className="skeleton-content">
+                <div className="skeleton-line wide" />
+                <div className="skeleton-line" />
+                <div className="skeleton-line medium" />
+                <div className="skeleton-line" />
+                <div className="skeleton-line wide" />
+              </div>
+            </div>
+          )}
+
           {/* Results Section */}
-          {result && (
-            <div className="results">
+          {result && !loading && (
+            <div className="results fade-in">
               {result.error ? (
                 <div className="error">{result.error}</div>
               ) : (
@@ -156,15 +196,15 @@ function App() {
                       <>
                         <ReactMarkdown>{result.overview || 'No overview'}</ReactMarkdown>
                         {result.tips?.length > 0 && (
-                          <>
-                            <h3>Tips</h3>
+                          <div className="tips-section">
+                            <h3>💡 Tips</h3>
                             <ul>{result.tips.map((tip, i) => <li key={i}>{tip}</li>)}</ul>
-                          </>
+                          </div>
                         )}
                       </>
                     )}
                     {activeTab === 'steps' && (
-                      <ol>{result.steps?.map((step, i) => <li key={i}>{step}</li>)}</ol>
+                      <StepWizard steps={result.steps || []} />
                     )}
                     {activeTab === 'wiring' && (
                       <ReactMarkdown>{result.wiring || 'No wiring info'}</ReactMarkdown>
@@ -172,18 +212,26 @@ function App() {
                     {activeTab === 'parts' && (
                       <>
                         <h3>Parts Needed</h3>
-                        <ul>{result.parts_needed?.map((p, i) => <li key={i}>{p}</li>)}</ul>
-                        {result.estimated_cost && <p><strong>Estimated Cost:</strong> {result.estimated_cost}</p>}
+                        <ul className="parts-list">
+                          {result.parts_needed?.map((p, i) => <li key={i}>{p}</li>)}
+                        </ul>
+                        {result.estimated_cost && (
+                          <p className="cost-estimate">
+                            <strong>Estimated Cost:</strong> {result.estimated_cost}
+                          </p>
+                        )}
                         {result.where_to_buy?.length > 0 && (
                           <>
                             <h3>Where to Buy</h3>
-                            <ul>{result.where_to_buy.map((w, i) => <li key={i}>{w}</li>)}</ul>
+                            <ul className="buy-list">
+                              {result.where_to_buy.map((w, i) => <li key={i}>{w}</li>)}
+                            </ul>
                           </>
                         )}
                       </>
                     )}
                     {activeTab === 'code' && (
-                      <pre><code>{result.firmware || 'No code generated'}</code></pre>
+                      <pre className="code-block"><code>{result.firmware || 'No code generated'}</code></pre>
                     )}
                   </div>
                   {result.model_used && (
