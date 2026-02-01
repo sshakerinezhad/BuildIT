@@ -3,27 +3,28 @@
 ## Last Session (2026-02-01)
 
 ### Completed
-- **Steps 1-4 complete** - Full backend with Gemini + OpenRouter fallback
-- Backend runs at `http://localhost:8000` with Swagger docs at `/docs`
+- **Steps 5-6 complete** - Full frontend with React + dark theme
+- Kit selector, mode toggle, tabbed results all working
+- Fixed API contract bugs between frontend/backend
 
 ### Key Files
-- `backend/main.py` - All backend logic (FastAPI, MongoDB, LLM calls)
-- `backend/.env` - API keys (needs fresh Gemini key)
-- `backend/venv/` - Python virtual environment
+- `frontend/src/App.jsx` - Main UI component
+- `frontend/src/App.css` - Component styles
+- `frontend/src/index.css` - Global dark theme with CSS variables
 
-### Running Backend
+### Running Locally
 ```bash
-cd backend
-source venv/bin/activate
-uvicorn main:app --reload
+# Terminal 1: Backend
+cd backend && source venv/bin/activate && uvicorn main:app --reload
+
+# Terminal 2: Frontend
+cd frontend && npm run dev
 ```
 
 ### Important Gotchas
-- **Gemini key leaked** - Replace in `.env` with fresh key from aistudio.google.com
-- **Model name** - Use `gemini-2.0-flash` (not 1.5)
-- **OpenRouter working** - Currently serving requests as fallback
+- **API field names** - Backend expects `kits` array and `goal` string, frontend must match exactly
+- **Kit ID field** - Backend returns `kit.id` (not `kit._id`)
+- **Gemini key** - Still needs fresh key from aistudio.google.com
 
 ### Next Up
-- Step 5: Frontend (Vite + React)
-- Step 6: UI components
-- Step 7: Digital Ocean deploy
+- Step 7: Digital Ocean deploy (Dockerize, deploy, env vars)

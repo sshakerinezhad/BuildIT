@@ -48,12 +48,18 @@ AI-powered robotics build planner with two modes:
 - [x] Install react-markdown for output rendering
 - [x] Basic layout with dark theme
 
-### Step 6: Frontend - UI Components
-- [ ] Mode toggle: Build Mode / Reverse Mode
-- [ ] Kit selector (multi-select for Build Mode)
-- [ ] Goal input text field
-- [ ] Generate button with loading state
-- [ ] Tabbed results view: Overview | Steps | Wiring/Parts | Code
+### Step 6: Frontend - UI Components ✓
+- [x] Mode toggle: Build Mode / Reverse Mode
+- [x] Kit selector (multi-select for Build Mode)
+- [x] Goal input text field
+- [x] Generate button with loading state
+- [x] Tabbed results view: Overview | Steps | Wiring/Parts | Code
+
+**Files:** `frontend/src/App.jsx`, `frontend/src/App.css`, `frontend/src/index.css`
+
+**Bugs fixed:**
+- Kit selector used `kit._id` but API returns `kit.id` - caused all kits to appear selected
+- API request sent `kit_ids` instead of `kits`, and was missing required `goal` field - caused [object Object] errors
 
 ### Step 7: Digital Ocean Deploy
 - [ ] Dockerize backend
@@ -75,13 +81,21 @@ GET  /health         → Health check
 
 ---
 
-## Running the Backend
+## Running Locally
 
+**Backend:**
 ```bash
 cd backend
 source venv/bin/activate
 uvicorn main:app --reload
 # API docs: http://localhost:8000/docs
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm run dev
+# Opens at http://localhost:5173
 ```
 
 ---
