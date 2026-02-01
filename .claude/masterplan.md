@@ -43,10 +43,10 @@ AI-powered robotics build planner with two modes:
 - [x] Auto-fallback when Gemini fails
 - [x] Response includes `model_used` field
 
-### Step 5: Frontend Setup
-- [ ] Create Vite + React app
-- [ ] Install react-markdown for output rendering
-- [ ] Basic layout with dark theme
+### Step 5: Frontend Setup ✓
+- [x] Create Vite + React app
+- [x] Install react-markdown for output rendering
+- [x] Basic layout with dark theme
 
 ### Step 6: Frontend - UI Components
 - [ ] Mode toggle: Build Mode / Reverse Mode
