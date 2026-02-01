@@ -38,16 +38,10 @@
   - Touch targets: **44px minimum** on mobile
   - Mobile breakpoint: **480px**
 
-  ## Mobile
-
-  - **Tabs mode**: One window at a time, centered
-  - **Scroll mode**: Stacked cards, vertical scroll
-  - Header grows: 40px → 56px
-  - Disable drag/resize on mobile
 
   ## Animations
 
-  - **Very subtle or none** - Don't distract from the retro aesthetic
+  - **Very subtle and cool** - Don't distract from the retro aesthetic, enhance it
 
   ## Content Architecture
 

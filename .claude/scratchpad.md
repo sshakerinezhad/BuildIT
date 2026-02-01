@@ -1,24 +1,29 @@
 # Session Scratchpad
 
-## Last Session (2026-01-23)
+## Last Session (2026-02-01)
 
 ### Completed
-- **Restyled detail view links** in `css/detail-view.css`
-  - Removed overrides (monospace, navy, no-underline) that fought the cascade
-  - Links now inherit from `.window-content a` (blue, underlined, red hover)
-  - Added only `font-weight: bold` and `font-size: 14px` for prominence
-  - Why: Links (navigation) should look distinct from back button (action)
+- **Steps 1-4 complete** - Full backend with Gemini + OpenRouter fallback
+- Backend runs at `http://localhost:8000` with Swagger docs at `/docs`
 
-- **Updated CLAUDE.md** - Cleaner skills reference with triggers listed inline
+### Key Files
+- `backend/main.py` - All backend logic (FastAPI, MongoDB, LLM calls)
+- `backend/.env` - API keys (needs fresh Gemini key)
+- `backend/venv/` - Python virtual environment
 
-### Pending
-- **ui-design.md has corrupted permissions** (WSL filesystem issue)
-  - File shows `???????` permissions in ls
-  - Content with new "Respect the cascade" principle was provided for manual recreation
-  - User needs to delete and recreate the file
+### Running Backend
+```bash
+cd backend
+source venv/bin/activate
+uvicorn main:app --reload
+```
 
-### Key Decision
-Added "Respect the cascade" principle to ui-design.md philosophy:
-> Remove overrides, let elements inherit established styles, only add what makes them distinct
+### Important Gotchas
+- **Gemini key leaked** - Replace in `.env` with fresh key from aistudio.google.com
+- **Model name** - Use `gemini-2.0-flash` (not 1.5)
+- **OpenRouter working** - Currently serving requests as fallback
 
-This follows the "simplest solution" philosophy - less CSS that works with the cascade beats more CSS that fights it.
+### Next Up
+- Step 5: Frontend (Vite + React)
+- Step 6: UI components
+- Step 7: Digital Ocean deploy

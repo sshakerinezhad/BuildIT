@@ -1,7 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(python3 -m venv:*)",
+      "Bash(source:*)",
+      "Bash(pip install:*)",
+      "Bash(curl:*)",
+      "Bash(pkill:*)",
+      "Bash(venv/bin/python:*)",
+      "Bash(python3:*)",
+      "Bash(timeout 5 venv/bin/uvicorn:*)"
     ]
   }
 }
